@@ -1,29 +1,30 @@
-import { useEffect } from 'react';
-import io from 'socket.io-client';
+import { BrowserRouter } from "react-router-dom";
+import SignupRoutes from "./routes/SignupRoutes";
+import { useEffect } from "react";
+import io from "socket.io-client";
 
-const socket = io('http://localhost:3001'); // ודא שהפורט נכון!
+// יצירת חיבור לסוקט
+const socket = io("http://localhost:3001");
 
 function App() {
   useEffect(() => {
-    // חיבור לשרת
-    socket.on('connect', () => {
-      console.log('Connected to socket server:', socket.id);
-
-      // שליחת הודעה לבדיקה
-      socket.emit('test', 'Hello from client!');
+    socket.on("connect", () => {
+      console.log("✅ Connected to socket server:", socket.id);
     });
 
-    // רק לוודא שאין שגיאות
-    socket.on('disconnect', () => {
-      console.log('Disconnected from server');
+    socket.on("disconnect", () => {
+      console.log("❌ Disconnected from socket server");
     });
 
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return (
-    <div className="text-2xl text-green-600 p-4">
-      Testing Socket.IO!
-    </div>
+    <BrowserRouter>
+      <SignupRoutes />
+    </BrowserRouter>
   );
 }
 
