@@ -1,10 +1,12 @@
 import { useState } from "react";
-import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"; // ✅ ייבוא navigate
+import { useAuth } from "../context/useAuth";
 
 function Signup() {
   const location = useLocation();
   const isAdmin = location.pathname.includes("admin");
+  const navigate = useNavigate(); // ✅ קריאה ל־navigate
+  const { signup } = useAuth();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -15,7 +17,7 @@ function Signup() {
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
@@ -23,20 +25,12 @@ function Signup() {
     setMessage("");
 
     try {
-      const res = await axios.post("http://localhost:3001/api/auth/signup", {
-        ...formData,
-        role: isAdmin ? "admin" : "user"
-      });
-
-      console.log("✅ Signed up:", res.data); // 👈 בדיקה חשובה
-      setMessage("Signup successful!");
-
-        // Save token to localStorage for future requests - dont forget to put in COntext folder later on
-      localStorage.setItem("token", res.data.token);
-      
+      await signup({ ...formData, role: isAdmin ? "admin" : "user" });
+      setMessage("✅ Signup successful!");
+      navigate("/login"); // ✅ נווט אוטומטית לאחר רישום
     } catch (err) {
-      console.error("❌ Signup error:", err.response?.data || err.message);
-      setMessage(err.response?.data?.message || "Signup failed");
+      console.error("❌ Signup error:", err.message);
+      setMessage(err.message || "Signup failed");
     }
   };
 
@@ -69,9 +63,12 @@ function Signup() {
           className="w-full p-2 border rounded"
         />
         <div className="flex justify-center">
-        <button type="submit" cclassName="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded center">
-          Sign Up
-        </button>
+          <button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded"
+          >
+            Sign Up
+          </button>
         </div>
       </form>
     </div>
