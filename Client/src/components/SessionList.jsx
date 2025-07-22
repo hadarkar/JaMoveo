@@ -1,30 +1,9 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-
+import { useAuth } from "../hooks/useAuth";
+import { useSessions } from "../hooks/useSessions";
 
 const SessionList = () => {
-
-  const [sessions, setSessions] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchSessions = async () => {
-    try {
-      const res = await axios.get("http://localhost:3001/api/sessions", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setSessions(res.data);
-    } catch (err) {
-      console.error("❌ Failed to fetch sessions:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSessions();
-  }, []);
+  const { user } = useAuth();
+  const { sessions, loading, joinSession } = useSessions(user);
 
   if (loading) return <p className="text-gray-500">Loading sessions...</p>;
 
@@ -36,8 +15,14 @@ const SessionList = () => {
       ) : (
         <ul className="space-y-2">
           {sessions.map((s) => (
-            <li key={s._id} className="border p-3 rounded">
+            <li key={s._id} className="border p-3 rounded flex justify-between">
               <span className="font-medium">{s.name}</span>
+              <button
+                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                onClick={() => joinSession(s._id)}
+              >
+                Join
+              </button>
             </li>
           ))}
         </ul>

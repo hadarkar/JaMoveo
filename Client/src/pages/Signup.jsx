@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // ✅ ייבוא navigate
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 function Signup() {
   const location = useLocation();
