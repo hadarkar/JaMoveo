@@ -13,3 +13,5 @@ yarn-error.log*
 
 # OS
 .DS_Store
+
+/dependencies and notes.docx
