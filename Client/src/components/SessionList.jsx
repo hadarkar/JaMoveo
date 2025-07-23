@@ -1,5 +1,5 @@
 import { useAuth } from "../hooks/useAuth";
-import { useSessions } from "../hooks/useSessions";
+import { useSessions } from "../hooks/sessionHooks/useSessions";
 
 const SessionList = () => {
   const { user } = useAuth();

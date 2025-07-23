@@ -1,7 +1,8 @@
 import Session from "../models/Session.js";
-import { createNewSession } from "../services/sessionService.js";
+import * as sessionService from "../services/sessionService.js";
 import { verifyToken } from "../middleware/auth.js";
-import { isAdmin} from "../middleware/isAdmin.js";
+import { isAdmin } from "../middleware/isAdmin.js";
+import { io } from "../socket/socket.js";
 
 // יצירת סשן (admin בלבד)
 export const createSession = [
@@ -12,7 +13,7 @@ export const createSession = [
       const { name } = req.body;
       const user = req.user;
 
-      const session = await createNewSession(name, user.id);
+      const session = await sessionService.createNewSession(name, user.id);
       res.status(201).json(session);
     } catch (err) {
       console.error("❌ Failed to create session:", err);
@@ -26,7 +27,7 @@ export const getAllSessions = [
   verifyToken,
   async (req, res) => {
     try {
-      const sessions = await Session.find().populate("createdBy", "username");
+      const sessions = await Session.find().populate("createdBy", "_id username role");
       res.status(200).json(sessions);
     } catch (err) {
       console.error("❌ Failed to get sessions:", err);
@@ -71,12 +72,15 @@ export const startSession = [
       const session = await Session.findById(sessionId);
       if (!session) return res.status(404).json({ message: "Session not found" });
 
-      if (session.createdBy.toString() !== userId) {
+      if (!sessionService.isSessionOwner(session, userId)) {
         return res.status(403).json({ message: "Only the creator can start the session" });
       }
 
       session.startedAt = new Date();
       await session.save();
+
+      // שידור התחלת שיר למשתמשים דרך Socket.IO
+      sessionService.emitSongStart(io, session);
 
       res.status(200).json({ message: "Session started", session });
     } catch (err) {

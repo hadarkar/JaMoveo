@@ -1,11 +1,9 @@
+import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import io from "socket.io-client";
-import AdminPanel from "./AdminPanel";
-import SessionList from "./SessionList";
-
-const socket = io("http://localhost:3001");
+import { socket } from "../hooks/sessionHooks/sessionSocketInstance"; // ✅ שימוש בסוקט אחיד
+import AdminPanel from "../components/AdminPanel";
+import SessionList from "../components/SessionList";
 
 const MainPage = () => {
   const { user } = useAuth();
@@ -13,11 +11,13 @@ const MainPage = () => {
 
   useEffect(() => {
     if (user?.role === "user") {
+      // האזנה לאירוע התחלת שיר מהשרת
       socket.on("songStarted", (songData) => {
         console.log("🎵 Song started:", songData);
-        navigate("/live");
+        navigate("/live"); // מעבר לדף live
       });
 
+      // ניקוי מאזין בעת יציאה מהקומפוננטה
       return () => socket.off("songStarted");
     }
   }, [user, navigate]);
