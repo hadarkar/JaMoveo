@@ -1,9 +1,14 @@
+import React from "react";
+import { useParams } from "react-router-dom";
 import { useLiveSong } from "../hooks/useLiveSong";
 
 const LivePage = () => {
-  const { song } = useLiveSong();
+  const { sessionId } = useParams();           // שולפים את מזהה הסשן מ‑URL
+  const { song } = useLiveSong(sessionId);     // מעבירים את sessionId ל‑hook
 
-  if (!song) return <div className="p-8">Waiting for song...</div>;
+  if (!song) {
+    return <div className="p-8">Waiting for song...</div>;
+  }
 
   return (
     <div className="p-8 text-center">

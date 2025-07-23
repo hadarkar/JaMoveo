@@ -1,19 +1,21 @@
+import 'dotenv/config';       // טוען אוטומטית את ה־.env לפני שאר הקוד
+// import dotenv from 'dotenv';
+// // dotenv.config();  // ⬅️ טען את משתני הסביבה בתחילת התהליך
+
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 
 import authRoutes from './routes/authRoutes.js';
 import sessionRoute from './routes/sessionRoute.js';
-import { initSocket } from './socket/socket.js'; // ✅ חדש
-
-dotenv.config();
+import { initSocket } from './socket/socket.js';
 
 const app = express();
 const server = http.createServer(app);
 
-initSocket(server); // ✅ הזנקת סוקט
+// לאתחול Socket.IO
+initSocket(server);
 
 app.use(cors());
 app.use(express.json());
@@ -22,9 +24,14 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/sessions', sessionRoute);
 
-// DB
-mongoose.connect(process.env.DB_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ Mongo connection error:", err));
+// Debug: ודא שה‑JWT_SECRET נטען
+console.log('🔑 JWT_SECRET at startup:', process.env.JWT_SECRET);
 
-server.listen(3001, () => console.log("🚀 Server running on port 3001"));
+mongoose
+  .connect(process.env.DB_URI)
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch((err) => console.error('❌ Mongo connection error:', err));
+
+server.listen(process.env.PORT || 3001, () =>
+  console.log(`🚀 Server running on port ${process.env.PORT || 3001}`)
+);

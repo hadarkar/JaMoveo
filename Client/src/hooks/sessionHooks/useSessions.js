@@ -1,4 +1,3 @@
-// 📁 hooks/sessionHooks/useSessions.js
 import { useState, useEffect, useCallback } from "react";
 import {
   fetchSessionsApi,
@@ -7,6 +6,7 @@ import {
   startSessionApi,
 } from "./useSessionApi";
 import { useSessionSocket } from "./useSessionSocket";
+import { socket } from "./sessionSocketInstance";
 
 export const useSessions = (user) => {
   const [sessions, setSessions] = useState([]);
@@ -36,6 +36,8 @@ export const useSessions = (user) => {
   const joinSession = useCallback(async (sessionId) => {
     try {
       await joinSessionApi(sessionId);
+      if (!socket.connected) socket.connect();
+      socket.emit("joinSession", sessionId);
       alert("✅ Joined session!");
     } catch (err) {
       console.error("❌ Failed to join session:", err);
@@ -49,7 +51,7 @@ export const useSessions = (user) => {
       alert("🎵 Session started!");
       fetchSessions();
     } catch (err) {
-      console.error("❌ Failed to start session", err);
+      console.error("❌ Failed to start session:", err);
       alert("Failed to start session.");
     }
   }, [fetchSessions]);
@@ -63,7 +65,6 @@ export const useSessions = (user) => {
   return {
     sessions,
     loading,
-    fetchSessions,
     createSession,
     joinSession,
     startSession,

@@ -2,16 +2,16 @@ import { Routes, Route } from "react-router-dom";
 import Signup from "../pages/Signup";
 import Login from "../pages/Login";
 import MainPage from "../pages/MainPage";
-import LivePage from "../pages/LivePage"; // ✅ חדש
-import PrivateRoute from "../components/PrivateRoute"; // ודא שהנתיב נכון
+import LivePage from "../pages/LivePage";
+import PrivateRoute from "../components/PrivateRoute";
 
 const SignupRoutes = () => (
   <Routes>
     <Route path="/signup" element={<Signup />} />
-    <Route path="/signup-admin" element={<Signup />} />
+    <Route path="/signup-admin" element={<Signup admin />} />
     <Route path="/login" element={<Login />} />
 
-    {/* 🛡️ route מוגנים – רק למשתמשים מחוברים */}
+    {/* מסלולים מוגנים */}
     <Route
       path="/main"
       element={
@@ -20,8 +20,9 @@ const SignupRoutes = () => (
         </PrivateRoute>
       }
     />
+
     <Route
-      path="/live"
+      path="/live/:sessionId"
       element={
         <PrivateRoute>
           <LivePage />

@@ -14,4 +14,9 @@ yarn-error.log*
 # OS
 .DS_Store
 
+# Word files
 /dependencies and notes.docx
+
+#local songs
+/hey_jude.json
+/veech_shelo.json
