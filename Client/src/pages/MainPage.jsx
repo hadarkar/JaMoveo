@@ -1,21 +1,51 @@
-import { useAuth } from "../context/useAuth";
+import { useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { socket } from "../hooks/sessionHooks/sessionSocketInstance";
+import AdminPanel from "../components/AdminPanel";
+import SessionList from "../components/SessionList";
 
 const MainPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  if (!user) return null; // או להחזיר ספינר בעתיד
+  useEffect(() => {
+    if (user?.role === "user") {
+      // מאזינים לאירוע songStarted עם sessionId
+      socket.on("songStarted", ({ sessionId }) => {
+        console.log("🎵 Song started for session:", sessionId);
+        navigate(`/live/${sessionId}`); // נווטים ל־LivePage עם מזהה הסשן
+      });
+
+      return () => {
+        socket.off("songStarted");
+      };
+    }
+  }, [user, navigate]);
+
+  if (!user) return null;
 
   return (
     <div className="p-8">
       {user.role === "admin" ? (
         <div>
-          <h1 className="text-3xl font-bold mb-4">🎩 Welcome, Admin {user.name}</h1>
-          <p className="text-lg">Here you can manage sessions, users, and monitor activity.</p>
+          <h1 className="text-3xl font-bold mb-4">
+            🎩 Welcome, Admin {user.username}
+          </h1>
+          <p className="text-lg mb-4">
+            Manage sessions and control the jam flow.
+          </p>
+          <AdminPanel />
         </div>
       ) : (
-        <div>
-          <h1 className="text-3xl font-bold mb-4">🎧 Welcome to JaMoveo, {user.name}</h1>
-          <p className="text-lg">Join a session, listen to music, or start a new jam!</p>
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">
+            🎧 Welcome, {user.username}
+          </h1>
+          <p className="text-xl text-gray-700 mb-4">
+            ⏳ Waiting for next song...
+          </p>
+          <SessionList />
         </div>
       )}
     </div>

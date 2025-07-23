@@ -3,36 +3,53 @@ import axios from "axios";
 import { AuthContext } from "./AuthContext";
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // ✅ חדש
+  const [user, setUser]       = useState(null);
+  const [token, setToken]     = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // בטעינת האפליקציה – טען מה־localStorage וסט את axios.header
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
+    const savedUser  = localStorage.getItem("user");
     const savedToken = localStorage.getItem("token");
 
     if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
+      const parsedUser = JSON.parse(savedUser);
+      setUser(parsedUser);
       setToken(savedToken);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
     }
 
-    setIsLoading(false); // ✅ סיימנו לטעון מה־localStorage
+    setIsLoading(false);
   }, []);
 
-    const signup = async (formData) => {
-    await axios.post("http://localhost:3001/api/auth/signup", formData);
-    // setUser(res.data.user);
-    // setToken(res.data.token);
-    // localStorage.setItem("user", JSON.stringify(res.data.user));
-    // localStorage.setItem("token", res.data.token);
+  // טיפול ב‑signup – שולח לשרת, מקבל back token + user._id
+  const signup = async (formData) => {
+    const res = await axios.post(
+      "http://localhost:3001/api/auth/signup",
+      formData
+    );
+    const { token: newToken, user: userData } = res.data;
+
+    setUser(userData);
+    setToken(newToken);
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", newToken);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
   };
 
+  // טיפול ב‑login – זהה ל‑signup
   const login = async (formData) => {
-    const res = await axios.post("http://localhost:3001/api/auth/login", formData);
-    setUser(res.data.user);
-    setToken(res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    localStorage.setItem("token", res.data.token);
+    const res = await axios.post(
+      "http://localhost:3001/api/auth/login",
+      formData
+    );
+    const { token: newToken, user: userData } = res.data;
+
+    setUser(userData);
+    setToken(newToken);
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", newToken);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
   };
 
   const logout = () => {
@@ -40,11 +57,14 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    delete axios.defaults.headers.common["Authorization"];
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, logout, isLoading }}>
-      {!isLoading && children} {/* ✅ לא נטען כלום עד שהמשתמש נבדק */}
+    <AuthContext.Provider
+      value={{ user, token, login, signup, logout, isLoading }}
+    >
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 };

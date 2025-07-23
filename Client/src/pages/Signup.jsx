@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // ✅ ייבוא navigate
-import { useAuth } from "../context/useAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 function Signup() {
   const location = useLocation();
   const isAdmin = location.pathname.includes("admin");
-  const navigate = useNavigate(); // ✅ קריאה ל־navigate
+  const navigate = useNavigate();
   const { signup } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ function Signup() {
     try {
       await signup({ ...formData, role: isAdmin ? "admin" : "user" });
       setMessage("✅ Signup successful!");
-      navigate("/login"); // ✅ נווט אוטומטית לאחר רישום
+      navigate("/login");
     } catch (err) {
       console.error("❌ Signup error:", err.message);
       setMessage(err.message || "Signup failed");
@@ -45,6 +45,7 @@ function Signup() {
           type="text"
           name="username"
           placeholder="Username"
+          value={formData.username}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
@@ -52,6 +53,7 @@ function Signup() {
           type="password"
           name="password"
           placeholder="Password"
+          value={formData.password}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
@@ -59,6 +61,7 @@ function Signup() {
           type="text"
           name="instrument"
           placeholder="Instrument"
+          value={formData.instrument}
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
