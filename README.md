@@ -35,6 +35,9 @@ Secured JWT-based authentication that ensures real-time access and alerts, light
 |----------------|---------------|-----------------|----------------|
 | React + Vite   | Node.js + Express | Socket.IO + JWT | Tailwind CSS |
 
+
+## Deployment: 
+Server - via Render, Client - via Vercel
 ---
 
 ## 🛠️ Setup & Installation
