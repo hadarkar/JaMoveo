@@ -1,9 +1,11 @@
+// src/pages/MainPage.jsx
+
 import { useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth }   from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { socket } from "../hooks/sessionHooks/sessionSocketInstance";
-import AdminPanel from "../components/AdminPanel";
-import SessionList from "../components/SessionList";
+import { socket }      from "../hooks/sessionHooks/sessionSocketInstance";
+import AdminPanel      from "../components/AdminPanel";
+import SessionList     from "../components/SessionList";
 
 const MainPage = () => {
   const { user } = useAuth();
@@ -11,15 +13,10 @@ const MainPage = () => {
 
   useEffect(() => {
     if (user?.role === "user") {
-      // מאזינים לאירוע songStarted עם sessionId
       socket.on("songStarted", ({ sessionId }) => {
-        console.log("🎵 Song started for session:", sessionId);
-        navigate(`/live/${sessionId}`); // נווטים ל־LivePage עם מזהה הסשן
+        navigate(`/live/${sessionId}`);
       });
-
-      return () => {
-        socket.off("songStarted");
-      };
+      return () => socket.off("songStarted");
     }
   }, [user, navigate]);
 

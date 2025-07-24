@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import SignupRoutes from "../routes/SignupRoutes";
+import RoutesManager from "../routes/RoutesManager";
 import NavBar from "../components/NavBar";
 import io from "socket.io-client";
 
@@ -29,7 +29,7 @@ const AppContent = () => {
   return (
     <>
       {!shouldHideNav && <NavBar />}
-      <SignupRoutes />
+      <RoutesManager />
     </>
   );
 };

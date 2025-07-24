@@ -3,7 +3,6 @@ import {
   fetchSessionsApi,
   createSessionApi,
   joinSessionApi,
-  startSessionApi,
 } from "./useSessionApi";
 import { useSessionSocket } from "./useSessionSocket";
 import { socket } from "./sessionSocketInstance";
@@ -25,13 +24,23 @@ export const useSessions = (user) => {
   }, [user]);
 
   const createSession = useCallback(async () => {
-    try {
-      await createSessionApi();
-    } catch (err) {
-      console.error("❌ Failed to create session:", err);
-      alert("Failed to create session.");
+  try {
+    const session = await createSessionApi();
+
+    // אם אין עדיין סשן במצב ה־state – נוצר אחד חדש
+    if (sessions.length === 0) {
+      alert("✅ Session created successfully!");
+    } else {
+      alert("⚠️ A session already exists.");
     }
-  }, []);
+
+    setSessions([session]); // במודל סינגלטון
+  } catch (err) {
+    console.error("❌ Failed to create session:", err);
+    alert("🚨 Failed to create session.");
+  }
+}, [sessions]);
+
 
   const joinSession = useCallback(async (sessionId) => {
     try {
@@ -45,17 +54,6 @@ export const useSessions = (user) => {
     }
   }, []);
 
-  const startSession = useCallback(async (sessionId) => {
-    try {
-      await startSessionApi(sessionId);
-      alert("🎵 Session started!");
-      fetchSessions();
-    } catch (err) {
-      console.error("❌ Failed to start session:", err);
-      alert("Failed to start session.");
-    }
-  }, [fetchSessions]);
-
   useEffect(() => {
     fetchSessions();
   }, [fetchSessions]);
@@ -67,6 +65,5 @@ export const useSessions = (user) => {
     loading,
     createSession,
     joinSession,
-    startSession,
   };
 };

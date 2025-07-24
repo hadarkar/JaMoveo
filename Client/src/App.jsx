@@ -1,12 +1,17 @@
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
-import AppContent from "./layouts/AppContent"; // 👈 קובץ נפרד עם useLocation
+import { SessionProvider } from "./context/SessionProvider"; // 🆕
+import AppContent from "./layouts/AppContent";
+import NavigationSocketHandler from "./components/NavigationSocketHandler";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppContent />
+        <SessionProvider> {/* 🟢 עוטף את הכל */}
+          <NavigationSocketHandler />
+          <AppContent />
+        </SessionProvider>
       </AuthProvider>
     </BrowserRouter>
   );
