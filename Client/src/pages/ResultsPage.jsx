@@ -1,10 +1,9 @@
-// src/pages/ResultsPage.jsx
 import React, { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useSongSearch } from "../hooks/useSongSearch";
 import { socket } from "../hooks/sessionHooks/sessionSocketInstance";
-import { useSessionStatus } from "../hooks/useSessionStatus";
-import { useAuth } from "../hooks/useAuth"; // ✅ נדרש כדי לבדוק תפקיד
+import { useSessionStatus } from "../hooks/sessionHooks/useSessionStatus";
+import { useAuth } from "../hooks/useAuth";
 
 const ResultsPage = () => {
   const [searchParams] = useSearchParams();
@@ -12,8 +11,8 @@ const ResultsPage = () => {
   const q = searchParams.get("q") || "";
 
   const { results, loading, error, search } = useSongSearch();
-  const { hasJoinedSession } = useSessionStatus(); // ✅ נדרש כדי לבדוק אם הצטרף
-  const { user } = useAuth(); // ✅ נדרש כדי לבדוק אם הוא אדמין
+  const { hasJoinedSession } = useSessionStatus();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!q) {
@@ -26,48 +25,50 @@ const ResultsPage = () => {
   const safeResults = Array.isArray(results) ? results : [];
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-2">Results for “{q}”</h1>
-      <p className="mb-4 text-gray-700">
-        You searched for: <strong>{q}</strong>
-      </p>
+    <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-sky-200 to-teal-200 px-4 py-10 text-gray-800">
+      <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-10 space-y-6">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center text-teal-700">
+          תוצאות עבור “{q}”
+        </h1>
 
-      {loading && <p>Loading…</p>}
-      {error && <p className="text-red-500">{error}</p>}
+        {loading && <p className="text-center text-gray-600">טוען שירים...</p>}
+        {error && <p className="text-center text-red-500">{error}</p>}
 
-      {!loading && safeResults.length === 0 && (
-        <div>
-          <p>Could not find any songs :(</p>
-          <button
-            onClick={() => navigate("/main")}
-            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Back to Main
-          </button>
-        </div>
-      )}
+        {!loading && safeResults.length === 0 && (
+          <div className="text-center space-y-4">
+            <p className="text-lg sm:text-xl">לא נמצאו שירים תואמים 🙁</p>
+            {user?.role === "admin" && (
+              <button
+                onClick={() => navigate("/main")}
+                className="bg-white hover:bg-gray-100 text-teal-700 px-5 py-2 rounded-full shadow transition"
+              >
+                חזרה למסך הראשי
+              </button>
+            )}
+          </div>
+        )}
 
-      {!loading && safeResults.length > 0 && (
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b text-left">Song</th>
-              <th className="py-2 px-4 border-b text-left">Artist</th>
-              <th className="py-2 px-4 border-b"></th>
-            </tr>
-          </thead>
-          <tbody>
+        {!loading && safeResults.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {safeResults.map((song) => (
-              <tr key={song.id} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border-b">{song.title}</td>
-                <td className="py-2 px-4 border-b">{song.artist}</td>
-                <td className="py-2 px-4 border-b">
+              <div
+                key={song.id}
+                className="bg-white rounded-xl shadow hover:shadow-lg transition p-5 flex flex-col justify-between"
+              >
+                <div className="mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    🎵 {song.title}
+                  </h2>
+                  <p className="text-sm text-gray-600">מאת: {song.artist}</p>
+                </div>
+
+                <div className="mt-auto text-left">
                   <button
                     onClick={() => {
                       const isAdmin = user?.role === "admin";
 
                       if (!isAdmin && !hasJoinedSession) {
-                        alert("❗ Please join the session before selecting a song.");
+                        alert("❗ הצטרף לסשן לפני בחירת שיר.");
                         return;
                       }
 
@@ -78,16 +79,16 @@ const ResultsPage = () => {
 
                       navigate(`/live/${encodeURIComponent(song.id)}`);
                     }}
-                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                    className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-full shadow transition"
                   >
-                    Select
+                    בחר שיר
                   </button>
-                </td>
-              </tr>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

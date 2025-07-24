@@ -37,10 +37,14 @@ export const signup = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('❌ signup error:', err.message);
-    res.status(400).json({ message: err.message });
+  console.error('❌ signup error:', err.message);
+  if (err.message === "Username already exists") {
+    return res.status(409).json({ message: err.message }); // חשוב: קוד סטטוס 409
   }
+  res.status(400).json({ message: err.message });
+}
 };
+
 
 export const login = async (req, res) => {
   if (!JWT_SECRET) {

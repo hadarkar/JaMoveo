@@ -27,19 +27,19 @@ const SearchBar = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Type song or artist"
-        className="border p-2 flex-grow"
+        placeholder="Search by song or artist..."
+        className="flex-grow px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white/90 backdrop-blur-sm placeholder-gray-500"
       />
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-gradient-to-r from-purple-600 to-indigo-500 text-white px-6 py-2 rounded-xl hover:scale-105 transition-transform duration-300 shadow-md"
       >
-        Search
+        🔍 Search
       </button>
     </form>
   );

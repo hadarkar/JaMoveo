@@ -12,6 +12,18 @@ export const initSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("🔌 Client connected:", socket.id);
 
+    // בקשת סטטוס סשן קיים
+    socket.on("requestSessionStatus", async () => {
+      try {
+        const session = await Session.findOne();
+        const hasActiveSession = !!(session && session.song);
+        socket.emit("sessionStatus", { hasActiveSession });
+      } catch (err) {
+        console.error("❌ Error in requestSessionStatus:", err);
+        socket.emit("sessionStatus", { hasActiveSession: false });
+      }
+    });
+
     socket.on("songSelected", async ({ song }) => {
       try {
         console.log("🎵 songSelected received from client:", song);

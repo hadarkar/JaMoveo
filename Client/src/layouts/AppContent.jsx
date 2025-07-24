@@ -23,7 +23,7 @@ const AppContent = () => {
     };
   }, []);
 
-  const hideNavOnRoutes = ["/", "/login", "/signup"];
+  const hideNavOnRoutes = ["/", "/login", "/signup", "/signup-admin"];
   const shouldHideNav = hideNavOnRoutes.includes(location.pathname);
 
   return (
