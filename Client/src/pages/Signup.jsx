@@ -1,4 +1,3 @@
-// Signup.jsx with random star background ✨
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +6,7 @@ import { Guitar, Piano } from "lucide-react";
 function Signup() {
   const { signup } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "", instrument: "" });
   const [message, setMessage] = useState("");
 
   const handleChange = (e) =>
@@ -16,12 +15,24 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+
+    // ולידציה מקומית
+    if (!formData.username || !formData.password || !formData.instrument) {
+      setMessage("יש למלא את כל השדות (שם משתמש, סיסמה וכלי נגינה)");
+      return;
+    }
+
     try {
       await signup(formData);
       navigate("/main");
-    } catch (err) {
-      setMessage(err.message || "שגיאה בהרשמה");
+    }  catch (err) {
+    // בדיקה על קוד סטטוס 409 מהשרת
+    if (err.response?.status === 409) {
+      setMessage("שם המשתמש כבר קיים במערכת");
+    } else {
+      setMessage("שגיאה בהרשמה");
     }
+  }
   };
 
   const generateStars = () => {
@@ -48,10 +59,8 @@ function Signup() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-indigo-950 via-blue-900 to-purple-900 overflow-hidden">
-      {/* שכבת כוכבים רנדומליים */}
       <div className="absolute inset-0 z-0">{generateStars()}</div>
 
-      {/* טופס הרשמה */}
       <div className="relative z-10 bg-white/10 backdrop-blur-md p-8 rounded-3xl shadow-xl w-full max-w-md space-y-6 border border-indigo-100">
         <div className="flex justify-center items-center gap-4 text-purple-300">
           <Guitar className="w-8 h-8" />
@@ -76,6 +85,18 @@ function Signup() {
             onChange={handleChange}
             className="w-full p-3 bg-black/30 border border-purple-200 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
           />
+          <select
+            name="instrument"
+            onChange={handleChange}
+            className="w-full p-3 bg-black/30 border border-purple-200 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+          >
+            <option value="">בחר כלי נגינה</option>
+            <option value="guitar">גיטרה</option>
+            <option value="piano">פסנתר</option>
+            <option value="drums">תופים</option>
+            <option value="bass">בס</option>
+            <option value="vocal">שירה</option>
+          </select>
           <button
             type="submit"
             className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-semibold shadow transition"

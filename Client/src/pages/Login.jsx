@@ -1,4 +1,3 @@
-// Login.jsx with random star background ✨
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -14,15 +13,27 @@ function Login() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("");
-    try {
-      await login(formData);
-      navigate("/main");
-    } catch (err) {
-      setMessage(err.message || "שגיאה בהתחברות");
+  e.preventDefault();
+  setMessage("");
+
+  if (!formData.username || !formData.password) {
+    setMessage("יש להזין שם משתמש וסיסמה");
+    return;
+  }
+
+  try {
+    await login(formData);
+    navigate("/main");
+  } catch (err) {
+    const serverMsg = err.response?.data?.message || "";
+    if (serverMsg.includes("not found") || serverMsg.includes("invalid")) {
+      setMessage("התחברות נכשלה /שם המשתמש או הסיסמה שגויים");
+    } else {
+      setMessage("שגיאה בהתחברות");
     }
-  };
+  }
+};
+
 
   const generateStars = () => {
     const stars = [];
@@ -48,10 +59,8 @@ function Login() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-indigo-950 via-blue-900 to-purple-900 overflow-hidden">
-      {/* שכבת כוכבים רנדומליים */}
       <div className="absolute inset-0 z-0">{generateStars()}</div>
 
-      {/* טופס התחברות */}
       <div className="relative z-10 bg-white/10 backdrop-blur-md p-8 rounded-3xl shadow-xl w-full max-w-md space-y-6 border border-indigo-100">
         <div className="flex justify-center items-center gap-4 text-purple-300">
           <Guitar className="w-8 h-8" />
