@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useSongSearch } from "../hooks/useSongSearch";
 import { socket } from "../hooks/sessionHooks/sessionSocketInstance";
-import { useSessionStatus } from "../hooks/useSessionStatus";
+import { useSessionStatus } from "../hooks/sessionHooks/useSessionStatus";
 import { useAuth } from "../hooks/useAuth"; // ✅ נדרש כדי לבדוק תפקיד
 
 const ResultsPage = () => {
