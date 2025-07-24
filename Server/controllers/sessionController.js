@@ -15,7 +15,7 @@ export const createSession = [
     try {
       const { name } = req.body;
       // יוצרים סשן חדש ושולחים אירוע sessionCreated
-      const session = await sessionService.createNewSession(name, req.user.id);
+      const session = await sessionService.createSingletonSession(req.user.id);
       return res.status(201).json(session);
     } catch (err) {
       console.error("❌ Failed to create session:", err);
