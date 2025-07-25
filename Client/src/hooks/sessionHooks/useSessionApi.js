@@ -1,4 +1,5 @@
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -6,7 +7,7 @@ const getAuthHeaders = () => ({
 
 // שליפת הסשנים
 export const fetchSessionsApi = async () => {
-  const res = await axios.get("http://localhost:3001/api/sessions", {
+  const res = await axios.get(`${API}/api/sessions`, {
     headers: getAuthHeaders(),
   });
   return res.data;
@@ -15,7 +16,7 @@ export const fetchSessionsApi = async () => {
 // יצירת סשן חדש
 export const createSessionApi = async () => {
   const res = await axios.post(
-    "http://localhost:3001/api/sessions",
+    `${API}/api/sessions`,
     { name: "New Jam Session" },
     { headers: getAuthHeaders() }
   );
@@ -25,7 +26,7 @@ export const createSessionApi = async () => {
 // הצטרפות לסשן
 export const joinSessionApi = async (sessionId) => {
   await axios.post(
-    `http://localhost:3001/api/sessions/${sessionId}/join`,
+    `${API}/api/sessions/${sessionId}/join`,
     {},
     { headers: getAuthHeaders() }
   );
@@ -34,7 +35,7 @@ export const joinSessionApi = async (sessionId) => {
 // התחלת סשן (admin בלבד)
 export const startSessionApi = async (sessionId) => {
   await axios.post(
-    `http://localhost:3001/api/sessions/${sessionId}/start`,
+    `${API}/api/sessions/${sessionId}/start`,
     {},
     { headers: getAuthHeaders() }
   );

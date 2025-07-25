@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import RoutesManager from "../routes/RoutesManager";
 import NavBar from "../components/NavBar";
-import io from "socket.io-client";
+import { socket } from "../hooks/sessionHooks/sessionSocketInstance";
 
-const socket = io("http://localhost:3001");
+
 
 const AppContent = () => {
   const location = useLocation();

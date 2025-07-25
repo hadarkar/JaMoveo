@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
+const API = import.meta.env.VITE_API_URL;
+
+
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser]       = useState(null);
@@ -25,7 +28,7 @@ export const AuthProvider = ({ children }) => {
   // טיפול ב‑signup – שולח לשרת, מקבל back token + user._id
   const signup = async (formData) => {
     const res = await axios.post(
-      "http://localhost:3001/api/auth/signup",
+      `${API}/api/auth/signup`,
       formData
     );
     const { token: newToken, user: userData } = res.data;
@@ -40,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   // טיפול ב‑login – זהה ל‑signup
   const login = async (formData) => {
     const res = await axios.post(
-      "http://localhost:3001/api/auth/login",
+      `${API}/api/auth/login`,
       formData
     );
     const { token: newToken, user: userData } = res.data;
