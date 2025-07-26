@@ -138,7 +138,7 @@ const LivePage = () => {
         <div key={i} className="flex flex-wrap justify-center gap-x-6 min-h-[120px]">
           {line.map((wordObj, j) => (
             <div key={j} className="flex flex-col items-center min-w-[70px]">
-              {userInstrument !== "singer" && (
+              {userInstrument !== "vocal" && (
                 <span className="text-xl text-blue-700 font-bold">
                   {wordObj.chords || "\u00A0"}
                 </span>
