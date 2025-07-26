@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Guitar, Piano } from "lucide-react";
 
 function Signup() {
   const { signup } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: "", password: "", instrument: "" });
+  const location = useLocation();
+  const isAdminSignup = location.pathname === "/signup-admin";
+
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    instrument: "",
+  });
   const [message, setMessage] = useState("");
 
   const handleChange = (e) =>
@@ -16,7 +23,6 @@ function Signup() {
     e.preventDefault();
     setMessage("");
 
-    // ולידציה מקומית
     if (!formData.username || !formData.password || !formData.instrument) {
       setMessage("יש למלא את כל השדות (שם משתמש, סיסמה וכלי נגינה)");
       return;
@@ -24,15 +30,14 @@ function Signup() {
 
     try {
       await signup(formData);
-      navigate("/main");
-    }  catch (err) {
-    // בדיקה על קוד סטטוס 409 מהשרת
-    if (err.response?.status === 409) {
-      setMessage("שם המשתמש כבר קיים במערכת");
-    } else {
-      setMessage("שגיאה בהרשמה");
+      navigate("/login");
+    } catch (err) {
+      if (err.response?.status === 409) {
+        setMessage("שם המשתמש כבר קיים במערכת");
+      } else {
+        setMessage("שגיאה בהרשמה");
+      }
     }
-  }
   };
 
   const generateStars = () => {
@@ -104,6 +109,43 @@ function Signup() {
             הרשם
           </button>
         </form>
+
+        {/* ניווטים נוספים */}
+        <div className="text-center mt-4 space-y-2">
+          <p className="text-sm text-white">
+            {isAdminSignup ? (
+              <>
+                רוצים להירשם כמשתמש רגיל?{" "}
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="text-purple-300 underline hover:text-purple-100 transition"
+                >
+                  מעבר להרשמה רגילה
+                </button>
+              </>
+            ) : (
+              <>
+                נרשמים כאדמין?{" "}
+                <button
+                  onClick={() => navigate("/signup-admin")}
+                  className="text-purple-300 underline hover:text-purple-100 transition"
+                >
+                  מעבר להרשמת אדמין
+                </button>
+              </>
+            )}
+          </p>
+
+          <p className="text-sm text-white">
+            כבר רשומים?{" "}
+            <button
+              onClick={() => navigate("/login")}
+              className="text-purple-300 underline hover:text-purple-100 transition"
+            >
+              התחברות
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

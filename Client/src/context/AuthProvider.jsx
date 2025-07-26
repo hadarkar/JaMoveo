@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]       = useState(null);
-  const [token, setToken]     = useState(null);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // בטעינת האפליקציה – טען מה־localStorage וסט את axios.header
   useEffect(() => {
-    const savedUser  = localStorage.getItem("user");
+    const savedUser = localStorage.getItem("user");
     const savedToken = localStorage.getItem("token");
 
     if (savedUser && savedToken) {
@@ -24,10 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   // טיפול ב‑signup – שולח לשרת, מקבל back token + user._id
   const signup = async (formData) => {
-    const res = await axios.post(
-      "http://localhost:3001/api/auth/signup",
-      formData
-    );
+    const res = await axios.post(`${API_URL}/api/auth/signup`, formData);
     const { token: newToken, user: userData } = res.data;
 
     setUser(userData);
@@ -39,10 +38,7 @@ export const AuthProvider = ({ children }) => {
 
   // טיפול ב‑login – זהה ל‑signup
   const login = async (formData) => {
-    const res = await axios.post(
-      "http://localhost:3001/api/auth/login",
-      formData
-    );
+    const res = await axios.post(`${API_URL}/api/auth/login`, formData);
     const { token: newToken, user: userData } = res.data;
 
     setUser(userData);

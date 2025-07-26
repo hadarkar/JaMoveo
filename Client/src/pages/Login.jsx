@@ -13,27 +13,26 @@ function Login() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setMessage("");
+    e.preventDefault();
+    setMessage("");
 
-  if (!formData.username || !formData.password) {
-    setMessage("יש להזין שם משתמש וסיסמה");
-    return;
-  }
-
-  try {
-    await login(formData);
-    navigate("/main");
-  } catch (err) {
-    const serverMsg = err.response?.data?.message || "";
-    if (serverMsg.includes("not found") || serverMsg.includes("invalid")) {
-      setMessage("התחברות נכשלה /שם המשתמש או הסיסמה שגויים");
-    } else {
-      setMessage("שגיאה בהתחברות");
+    if (!formData.username || !formData.password) {
+      setMessage("יש להזין שם משתמש וסיסמה");
+      return;
     }
-  }
-};
 
+    try {
+      await login(formData);
+      navigate("/main");
+    } catch (err) {
+      const serverMsg = err.response?.data?.message || "";
+      if (serverMsg.includes("not found") || serverMsg.includes("invalid")) {
+        setMessage("התחברות נכשלה /שם המשתמש או הסיסמה שגויים");
+      } else {
+        setMessage("שגיאה בהתחברות");
+      }
+    }
+  };
 
   const generateStars = () => {
     const stars = [];
@@ -92,6 +91,28 @@ function Login() {
             התחבר
           </button>
         </form>
+
+        {/* לינקים להרשמה */}
+        <div className="text-center mt-4 space-y-2">
+          <p className="text-sm text-white">
+            אין לך חשבון?{" "}
+            <button
+              onClick={() => navigate("/signup")}
+              className="text-purple-300 underline hover:text-purple-100 transition"
+            >
+              הרשמה למשתמש רגיל
+            </button>
+          </p>
+          <p className="text-sm text-white">
+            מנהל חדש?{" "}
+            <button
+              onClick={() => navigate("/signup-admin")}
+              className="text-purple-300 underline hover:text-purple-100 transition"
+            >
+              הרשמה כאדמין
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

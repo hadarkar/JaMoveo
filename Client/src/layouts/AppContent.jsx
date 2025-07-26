@@ -4,7 +4,8 @@ import RoutesManager from "../routes/RoutesManager";
 import NavBar from "../components/NavBar";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3001");
+const API_URL = import.meta.env.VITE_API_URL;
+const socket = io(API_URL);
 
 const AppContent = () => {
   const location = useLocation();

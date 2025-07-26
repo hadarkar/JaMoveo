@@ -1,6 +1,6 @@
 # node
 node_modules/
-.env
+
 
 # builds
 dist/
@@ -18,5 +18,3 @@ yarn-error.log*
 /dependencies and notes.docx
 
 #local songs
-/hey_jude.json
-/veech_shelo.json

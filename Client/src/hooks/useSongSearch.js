@@ -1,25 +1,26 @@
-// src/hooks/useSongSearch.js
-
 import { useState, useCallback } from "react";
 import axios from "axios";
 
-/**
- * Hook לחיפוש שירים דרך /api/search/tracks?q=
- * ממיר מחרוזת JSON לאובייקט במקרה הצורך
- */
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const useSongSearch = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
 
   const search = useCallback(async (q) => {
     setLoading(true);
     setError(null);
     try {
-      const resp = await axios.get("/api/search/tracks", { params: { q } });
+      const resp = await axios.get(`${API_URL}/api/search/tracks`, {
+        params: { q },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
       let data = resp.data;
 
-      // אם במקרה קיבלנו מחרוזת, ננסה לפרסס אותה
       if (typeof data === "string") {
         try {
           data = JSON.parse(data);
@@ -28,7 +29,6 @@ export const useSongSearch = () => {
         }
       }
 
-      // אם זה לא מערך, נזריק שגיאה
       if (!Array.isArray(data)) {
         throw new Error("Invalid response format: expected an array");
       }
@@ -37,7 +37,7 @@ export const useSongSearch = () => {
     } catch (err) {
       console.error("❌ useSongSearch error:", err);
       setError(err.response?.data?.message || err.message);
-      setResults([]);  // שומרים תמיד מערך
+      setResults([]);
     } finally {
       setLoading(false);
     }

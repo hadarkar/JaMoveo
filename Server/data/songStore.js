@@ -13,13 +13,13 @@ const require = createRequire(import.meta.url);
 
 // מייבאים את ה־JSON
 const veechShelo = require(join(__dirname, "veech_shelo.json"));
-const heyJude    = require(join(__dirname, "hey_jude_scroll_test.json"));
+const heyJude    = require(join(__dirname, "hey_jude.json"));
 
 export const songs = [
   {
     id:     "veech_shelo",
     title:  "Veech Shelo",
-    artist: "Unknown Artist",
+    artist: "Ariel Zilber",
     lyrics: veechShelo,
   },
   {
