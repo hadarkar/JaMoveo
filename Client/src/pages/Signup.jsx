@@ -18,7 +18,7 @@ function Signup() {
 
   const [message, setMessage] = useState("");
 
-  // עידכון role אם המשתמש עובר בין /signup ל-/signup-admin
+  // Update role when path changes
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
@@ -39,7 +39,13 @@ function Signup() {
     }
 
     try {
-      await signup(formData);
+      // חיזוק - ודא ש-role מוגדר שוב לפי הנתיב הנוכחי
+      const signupData = {
+        ...formData,
+        role: isAdminSignup ? "admin" : "user",
+      };
+
+      await signup(signupData);
       navigate("/login");
     } catch (err) {
       if (err.response?.status === 409) {
@@ -120,7 +126,7 @@ function Signup() {
           </button>
         </form>
 
-        {/* ניווטים נוספים */}
+        {/* קישורים להרשמה אחרת והתחברות */}
         <div className="text-center mt-4 space-y-2">
           <p className="text-sm text-white">
             {isAdminSignup ? (
