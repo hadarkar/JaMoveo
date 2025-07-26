@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Guitar, Piano } from "lucide-react";
@@ -13,8 +13,18 @@ function Signup() {
     username: "",
     password: "",
     instrument: "",
+    role: isAdminSignup ? "admin" : "user",
   });
+
   const [message, setMessage] = useState("");
+
+  // עידכון role אם המשתמש עובר בין /signup ל-/signup-admin
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      role: isAdminSignup ? "admin" : "user",
+    }));
+  }, [isAdminSignup]);
 
   const handleChange = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
