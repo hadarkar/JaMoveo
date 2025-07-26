@@ -14,7 +14,7 @@ const LyricsDisplay = ({ lyrics, instrument }) => {
               key={j}
               className="flex flex-col items-center min-w-[60px]"
             >
-              {instrument !== "singer" && (
+              {instrument !== "vocal" && (
                 <span className="text-xl text-blue-700 font-bold">
                   {wordObj.chords || "\u00A0"}
                 </span>
